@@ -1,9 +1,10 @@
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { FiBookOpen, FiTarget, FiCalendar, FiCpu, FiCheck, FiArrowRight, FiZap, FiBarChart2, FiLayers, FiShield, FiGlobe, FiStar, FiTwitter, FiGithub, FiLinkedin } from 'react-icons/fi';
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
 import { useStudyContext } from '../context/StudyContext';
+
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -16,7 +17,7 @@ const stagger = {
 
 const Landing = () => {
   const navigate = useNavigate();
-  const { login, user } = useStudyContext();
+  const { login } = useStudyContext();
 
   const handleGoogleSuccess = (credentialResponse) => {
     try {
@@ -32,7 +33,6 @@ const Landing = () => {
     }
   };
 
-  if (user) navigate('/dashboard');
 
   const features = [
     { icon: <FiBookOpen />, title: 'Subject Organization', desc: 'Organize subjects and topics with color labels, difficulty levels, and progress tracking.' },
@@ -50,12 +50,6 @@ const Landing = () => {
     { num: 4, title: 'AI-Powered Revision', desc: 'Generate summaries and flashcards. Let AI help you study smarter.' }
   ];
 
-  const testimonials = [
-    { name: 'Arjun Mehta', role: 'CSE Student, IIT Delhi', text: 'This app completely transformed my study routine. The AI flashcards are incredibly helpful for revision.', initials: 'AM' },
-    { name: 'Priya Sharma', role: 'Medical Student', text: 'Finally a study tool that actually helps me organize topics and track what I\'ve covered. The analytics are great.', initials: 'PS' },
-    { name: 'Ravi Kumar', role: 'GATE Aspirant', text: 'The revision planner alone saved me hours of planning. Plus the AI summaries are spot on for quick reviews.', initials: 'RK' }
-  ];
-
   const barHeights = [40, 65, 45, 80, 55, 70, 90];
 
   return (
@@ -69,9 +63,8 @@ const Landing = () => {
           <li><a href="#features">Features</a></li>
           <li><a href="#how-it-works">How It Works</a></li>
           <li><a href="#testimonials">Testimonials</a></li>
-          <li><a href="#pricing">Pricing</a></li>
         </ul>
-        <div className="landing-nav-actions">
+        <div className="landing-nav-actions" style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
           <GoogleLogin
             onSuccess={handleGoogleSuccess}
             onError={() => console.log('Login Failed')}
@@ -79,6 +72,9 @@ const Landing = () => {
             text="signin"
             size="medium"
           />
+          <Link to="/dashboard" className="btn btn-primary" style={{ borderRadius: 30, padding: '8px 20px' }}>
+            Open App
+          </Link>
         </div>
       </nav>
 
@@ -93,7 +89,10 @@ const Landing = () => {
           <motion.p variants={fadeUp}>
             Your personal AI study companion that helps you organize subjects, track progress, plan revisions, and generate study materials — all in one place.
           </motion.p>
-          <motion.div className="hero-buttons" variants={fadeUp}>
+          <motion.div className="hero-buttons" variants={fadeUp} style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center' }}>
+            <Link to="/dashboard" className="btn btn-primary btn-lg" style={{ borderRadius: 30 }}>
+              Start for Free <FiArrowRight />
+            </Link>
             <GoogleLogin
               onSuccess={handleGoogleSuccess}
               onError={() => console.log('Login Failed')}
@@ -101,9 +100,6 @@ const Landing = () => {
               text="signin_with"
               size="large"
             />
-            <a href="#features" className="btn btn-secondary btn-lg" style={{ borderRadius: 30 }}>
-              Learn More <FiArrowRight />
-            </a>
           </motion.div>
           <motion.div className="hero-stats" variants={fadeUp}>
             <div className="hero-stat"><h4>10K+</h4><p>Active Students</p></div>
@@ -167,7 +163,7 @@ const Landing = () => {
         </motion.div>
       </section>
 
-      <section className="landing-section" id="how-it-works" style={{ background: 'var(--bg-secondary)', borderRadius: 'var(--radius-xl)', margin: '0 40px' }}>
+      <section className="landing-section" id="how-it-works" style={{ background: 'var(--bg-secondary)', borderRadius: 'var(--radius-xl)' }}>
         <motion.div className="section-header" initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
           <p className="overline">How It Works</p>
           <h2>Get Started in Minutes</h2>
@@ -185,83 +181,15 @@ const Landing = () => {
         </motion.div>
       </section>
 
-      <section className="landing-section" id="testimonials">
-        <motion.div className="section-header" initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
-          <p className="overline">Testimonials</p>
-          <h2>Loved by Students</h2>
-          <p>Here's what students have to say about StudyAI.</p>
-        </motion.div>
-        <motion.div className="testimonials-grid" initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger}>
-          {testimonials.map((t, i) => (
-            <motion.div className="testimonial-card" key={i} variants={fadeUp}>
-              <div className="testimonial-stars">
-                {[...Array(5)].map((_, j) => <FiStar key={j} fill="#f59e0b" />)}
-              </div>
-              <p>"{t.text}"</p>
-              <div className="testimonial-author">
-                <div className="testimonial-avatar">{t.initials}</div>
-                <div className="testimonial-author-info">
-                  <h4>{t.name}</h4>
-                  <span>{t.role}</span>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
-      </section>
 
-      <section className="landing-section" id="pricing">
-        <motion.div className="section-header" initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
-          <p className="overline">Pricing</p>
-          <h2>Simple, Transparent Pricing</h2>
-          <p>Choose the plan that fits your needs.</p>
-        </motion.div>
-        <motion.div className="pricing-grid" initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger}>
-          <motion.div className="pricing-card" variants={fadeUp}>
-            <h3>Free</h3>
-            <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Perfect to get started</p>
-            <div className="pricing-price">$0<span>/mo</span></div>
-            <ul className="pricing-features">
-              <li><FiCheck /> Up to 5 subjects</li>
-              <li><FiCheck /> Basic task management</li>
-              <li><FiCheck /> Progress dashboard</li>
-              <li><FiCheck /> 10 AI queries/day</li>
-            </ul>
-            <button className="btn btn-secondary" style={{ width: '100%', justifyContent: 'center' }}>Get Started</button>
-          </motion.div>
-          <motion.div className="pricing-card featured" variants={fadeUp}>
-            <div className="pricing-badge">Most Popular</div>
-            <h3>Pro</h3>
-            <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>For serious students</p>
-            <div className="pricing-price">$9<span>/mo</span></div>
-            <ul className="pricing-features">
-              <li><FiCheck /> Unlimited subjects</li>
-              <li><FiCheck /> Advanced analytics</li>
-              <li><FiCheck /> Revision planner</li>
-              <li><FiCheck /> Unlimited AI queries</li>
-              <li><FiCheck /> Priority support</li>
-            </ul>
-            <button className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }}>Start Free Trial</button>
-          </motion.div>
-          <motion.div className="pricing-card" variants={fadeUp}>
-            <h3>Team</h3>
-            <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>For study groups</p>
-            <div className="pricing-price">$19<span>/mo</span></div>
-            <ul className="pricing-features">
-              <li><FiCheck /> Everything in Pro</li>
-              <li><FiCheck /> Shared study groups</li>
-              <li><FiCheck /> Collaborative notes</li>
-              <li><FiCheck /> Admin dashboard</li>
-            </ul>
-            <button className="btn btn-secondary" style={{ width: '100%', justifyContent: 'center' }}>Contact Sales</button>
-          </motion.div>
-        </motion.div>
-      </section>
 
       <motion.section className="cta-section" initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
         <h2>Ready to Transform Your Studies?</h2>
         <p>Join thousands of students who are already studying smarter with AI-powered tools.</p>
-        <div className="google-btn-wrapper">
+        <div className="hero-buttons" style={{ marginTop: 32, display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
+          <Link to="/dashboard" className="btn btn-primary btn-lg" style={{ borderRadius: 30 }}>
+            Start Studying Now <FiArrowRight />
+          </Link>
           <GoogleLogin
             onSuccess={handleGoogleSuccess}
             onError={() => console.log('Login Failed')}
@@ -282,7 +210,6 @@ const Landing = () => {
             <h4>Product</h4>
             <ul>
               <li><a href="#features">Features</a></li>
-              <li><a href="#pricing">Pricing</a></li>
               <li><a href="#how-it-works">How It Works</a></li>
             </ul>
           </div>

@@ -1,9 +1,11 @@
 import axios from 'axios';
 
-const GEMINI_API_KEY = 'AIzaSyAe95toGg6wJ7pnUwteneURX1WSFsWhWyU';
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-const getGeminiUrl = (model) => `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
+const getGeminiUrl = (model) => {
+  const apiKey = localStorage.getItem('studyAI_gemini_key') || import.meta.env.VITE_GEMINI_API_KEY;
+  return `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+};
 
 const callGemini = async (prompt, retries = 3) => {
   // Try 2.0-flash-lite first (faster/higher limits), then 2.0-flash, then flash-latest

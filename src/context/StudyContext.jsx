@@ -15,12 +15,22 @@ export const StudyProvider = ({ children }) => {
   const [tasks, setTasks] = useState(() => loadFromStorage(STORAGE_KEYS.TASKS) || []);
   const [revisions, setRevisions] = useState(() => loadFromStorage(STORAGE_KEYS.REVISIONS) || []);
   const [user, setUser] = useState(() => loadFromStorage(STORAGE_KEYS.USER) || null);
+  const [geminiApiKey, setGeminiApiKeyState] = useState(() => localStorage.getItem('studyAI_gemini_key') || '');
 
   useEffect(() => { saveToStorage(STORAGE_KEYS.SUBJECTS, subjects); }, [subjects]);
   useEffect(() => { saveToStorage(STORAGE_KEYS.TOPICS, topics); }, [topics]);
   useEffect(() => { saveToStorage(STORAGE_KEYS.TASKS, tasks); }, [tasks]);
   useEffect(() => { saveToStorage(STORAGE_KEYS.REVISIONS, revisions); }, [revisions]);
   useEffect(() => { saveToStorage(STORAGE_KEYS.USER, user); }, [user]);
+
+  const setGeminiApiKey = (key) => {
+    setGeminiApiKeyState(key);
+    if (key) {
+      localStorage.setItem('studyAI_gemini_key', key);
+    } else {
+      localStorage.removeItem('studyAI_gemini_key');
+    }
+  };
 
   const addSubject = (subject) => setSubjects(prev => [...prev, subject]);
   const updateSubject = (id, data) => setSubjects(prev => prev.map(s => s.id === id ? { ...s, ...data } : s));
@@ -50,7 +60,7 @@ export const StudyProvider = ({ children }) => {
     topics, addTopic, updateTopic, deleteTopic,
     tasks, addTask, updateTask, deleteTask,
     revisions, addRevision, updateRevision, deleteRevision,
-    user, login, logout
+    user, login, logout, geminiApiKey, setGeminiApiKey
   };
 
   return <StudyContext.Provider value={value}>{children}</StudyContext.Provider>;

@@ -1,14 +1,16 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiCpu, FiFileText, FiHelpCircle, FiGrid, FiSend, FiArrowLeft, FiRefreshCw, FiMessageSquare } from 'react-icons/fi';
+import { FiCpu, FiFileText, FiHelpCircle, FiGrid, FiSend, FiArrowLeft, FiRefreshCw, FiMessageSquare, FiZap } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 import useSubjects from '../hooks/useSubjects';
+import { useStudyContext } from '../context/StudyContext';
 import { generateSummary, generateQuestions, generateFlashcards, askQuestion } from '../services/aiService';
 
 const fadeUp = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } };
 
 const AITools = () => {
   const { subjects, topics, getTopicsForSubject } = useSubjects();
+  const { geminiApiKey, setGeminiApiKey } = useStudyContext();
   const [activeTool, setActiveTool] = useState(null);
   const [selectedSubject, setSelectedSubject] = useState('');
   const [selectedTopic, setSelectedTopic] = useState('');
@@ -279,17 +281,39 @@ const AITools = () => {
       </div>
 
       {!activeTool ? (
-        <motion.div className="ai-tools-grid" variants={{ visible: { transition: { staggerChildren: 0.1 } } }}>
-          {tools.map(tool => (
-            <motion.div className="ai-tool-card" key={tool.id} variants={fadeUp}
-              onClick={() => setActiveTool(tool.id)} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-              <div className="ai-tool-icon" style={{ background: tool.bg, color: tool.color }}>
-                {tool.icon}
-              </div>
-              <h3>{tool.title}</h3>
-              <p>{tool.desc}</p>
-            </motion.div>
-          ))}
+        <motion.div variants={{ visible: { transition: { staggerChildren: 0.1 } } }}>
+          <div className="ai-tools-grid" style={{ marginBottom: 40 }}>
+            {tools.map(tool => (
+              <motion.div className="ai-tool-card" key={tool.id} variants={fadeUp}
+                onClick={() => setActiveTool(tool.id)} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <div className="ai-tool-icon" style={{ background: tool.bg, color: tool.color }}>
+                  {tool.icon}
+                </div>
+                <h3>{tool.title}</h3>
+                <p>{tool.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.div className="card" variants={fadeUp} style={{ padding: 24, maxWidth: 640 }}>
+            <h3 style={{ fontSize: 16, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 8 }}>
+              <FiZap style={{ color: 'var(--primary)' }} /> Custom Gemini API Key
+            </h3>
+            <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 16 }}>
+              StudyAI uses a default shared API key. If you experience rate limits, provide your own (free) Gemini API key for unlimited personal usage.
+            </p>
+            <div style={{ display: 'flex', gap: 12 }}>
+              <input 
+                type="password" 
+                value={geminiApiKey} 
+                onChange={(e) => setGeminiApiKey(e.target.value)} 
+                placeholder="AIzaSy..." 
+                className="search-input" 
+                style={{ flex: 1, paddingLeft: 16 }} 
+              />
+              {geminiApiKey && <button className="btn btn-ghost" onClick={() => setGeminiApiKey('')}>Clear</button>}
+            </div>
+          </motion.div>
         </motion.div>
       ) : (
         <AnimatePresence mode="wait">

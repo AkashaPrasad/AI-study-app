@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { StudyProvider, useStudyContext } from './context/StudyContext';
+import { StudyProvider } from './context/StudyContext';
 import AppLayout from './components/AppLayout';
 import Landing from './pages/Landing';
 import Dashboard from './pages/Dashboard';
@@ -11,11 +11,7 @@ import Tasks from './pages/Tasks';
 import Revision from './pages/Revision';
 import AITools from './pages/AITools';
 
-const GOOGLE_CLIENT_ID = '908727741603-er3os9r3nnu988vc9f9h77d5h2hvcid5.apps.googleusercontent.com';
-
-const ProtectedRoute = ({ children }) => {
-  const { user } = useStudyContext();
-  if (!user) return <Navigate to="/" replace />;
+const AppRoute = ({ children }) => {
   return <AppLayout>{children}</AppLayout>;
 };
 
@@ -23,19 +19,20 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Landing />} />
-      <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-      <Route path="/subjects" element={<ProtectedRoute><Subjects /></ProtectedRoute>} />
-      <Route path="/tasks" element={<ProtectedRoute><Tasks /></ProtectedRoute>} />
-      <Route path="/revision" element={<ProtectedRoute><Revision /></ProtectedRoute>} />
-      <Route path="/ai-tools" element={<ProtectedRoute><AITools /></ProtectedRoute>} />
+      <Route path="/dashboard" element={<AppRoute><Dashboard /></AppRoute>} />
+      <Route path="/subjects" element={<AppRoute><Subjects /></AppRoute>} />
+      <Route path="/tasks" element={<AppRoute><Tasks /></AppRoute>} />
+      <Route path="/revision" element={<AppRoute><Revision /></AppRoute>} />
+      <Route path="/ai-tools" element={<AppRoute><AITools /></AppRoute>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };
 
 const App = () => {
+  const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || '908727741603-er3os9r3nnu988vc9f9h77d5h2hvcid5.apps.googleusercontent.com';
   return (
-    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+    <GoogleOAuthProvider clientId={clientId}>
       <StudyProvider>
         <BrowserRouter>
           <AppRoutes />
